@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>About |MANU PHOTOGRAPHY</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Poppins,sans-serif;
+}
+
+body{
+background:#0d0d0d;
+color:white;
+}
+
+header{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:20px 60px;
+background:#000;
+z-index:1000;
+}
+
+.logo{
+font-size:30px;
+font-family:Cinzel;
+color:#D4AF37;
+}
+
+nav ul{
+display:flex;
+list-style:none;
+}
+
+nav ul li{
+margin-left:30px;
+}
+
+nav ul li a{
+text-decoration:none;
+color:white;
+transition:.3s;
+}
+
+nav ul li a:hover,
+.active{
+color:#D4AF37;
+}
+
+.banner{
+height:50vh;
+background:url("https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=1600&q=80") center/cover;
+display:flex;
+justify-content:center;
+align-items:center;
+margin-top:80px;
+}
+
+.banner h1{
+font-size:60px;
+font-family:Cinzel;
+color:#D4AF37;
+}
+
+.container{
+width:90%;
+max-width:1200px;
+margin:70px auto;
+display:flex;
+gap:50px;
+align-items:center;
+flex-wrap:wrap;
+}
+
+.image{
+flex:1;
+}
+
+.image img{
+width:100%;
+border-radius:15px;
+}
+
+.content{
+flex:1;
+}
+
+.content h2{
+font-size:42px;
+font-family:Cinzel;
+color:#D4AF37;
+margin-bottom:20px;
+}
+
+.content p{
+font-size:17px;
+line-height:1.8;
+color:#ccc;
+margin-bottom:20px;
+}
+
+.stats{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:20px;
+width:90%;
+margin:50px auto;
+}
+
+.box{
+background:#181818;
+padding:30px;
+text-align:center;
+border-radius:10px;
+}
+
+.box h2{
+color:#D4AF37;
+font-size:35px;
+}
+
+.box p{
+margin-top:10px;
+}
+
+footer{
+margin-top:80px;
+background:#111;
+padding:30px;
+text-align:center;
+}
+
+@media(max-width:768px){
+
+.container{
+flex-direction:column;
+}
+
+.stats{
+grid-template-columns:repeat(2,1fr);
+}
+
+.banner h1{
+font-size:40px;
+}
+
+header{
+padding:20px;
+}
+
+nav{
+display:none;
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<div class="logo">MANU PHOTOGRAPHY</div>
+
+<nav>
+
+<ul>
+
+<li><a href="index.html">Home</a></li>
+
+<li><a href="about.html" class="active">About</a></li>
+
+<li><a href="portfolio.html">Portfolio</a></li>
+
+<li><a href="services.html">Services</a></li>
+
+<li><a href="booking.html">Booking</a></li>
+
+<li><a href="gallery.html">Gallery</a></li>
+
+<li><a href="contact.html">Contact</a></li>
+
+</ul>
+
+</nav>
+
+</header>
+
+<section class="banner">
+
+<h1>About Us</h1>
+
+</section>
+
+<section class="container">
+
+<div class="image">
+
+<img src="Manoj.jpg" alt="About MANU PHOTOGRAPHY">
+
+</div>
+
+<div class="content">
+
+<h2>Capturing Memories Forever</h2>
+
+<p>
+
+MANU PHOTOGRAPHY specializes in luxury wedding photography, cinematic films, pre-wedding shoots, traditional events, birthdays, maternity sessions, and drone cinematography.
+
+</p>
+
+<p>
+
+Our goal is to transform every beautiful moment into a timeless memory with creativity, passion, and professionalism.
+
+</p>
+
+</div>
+
+</section>
+
+<section class="stats">
+
+<div class="box">
+<h2>300+</h2>
+<p>Happy Clients</p>
+</div>
+
+<div class="box">
+<h2>200+</h2>
+<p>Events Covered</p>
+</div>
+
+<div class="box">
+<h2>3+</h2>
+<p>Years Experience</p>
+</div>
+
+<div class="box">
+<h2>0</h2>
+<p>Editing</p>
+</div>
+
+</section>
+
+<footer>
+
+<h2 style="color:#D4AF37;">MANU PHOTOGRAPHY</h2>
+
+<p>Dreams Change Into Stories</p>
+
+<p>©2026 All Rights Reserved.</p>
+
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Booking | MANU PHOTOGRAPHY</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Poppins,sans-serif;
+}
+
+body{
+background:#0d0d0d;
+color:#fff;
+}
+
+header{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:20px 60px;
+background:#000;
+z-index:1000;
+}
+
+.logo{
+font-size:30px;
+font-family:Cinzel;
+color:#D4AF37;
+}
+
+nav ul{
+display:flex;
+list-style:none;
+}
+
+nav ul li{
+margin-left:30px;
+}
+
+nav ul li a{
+color:white;
+text-decoration:none;
+transition:.3s;
+}
+
+nav ul li a:hover,
+.active{
+color:#D4AF37;
+}
+
+.banner{
+margin-top:80px;
+height:40vh;
+background:url("https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=1600&q=80") center/cover;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+.banner h1{
+font-size:60px;
+font-family:Cinzel;
+color:#D4AF37;
+}
+
+.container{
+width:90%;
+max-width:900px;
+margin:60px auto;
+background:#181818;
+padding:40px;
+border-radius:15px;
+}
+
+.container h2{
+text-align:center;
+font-family:Cinzel;
+color:#D4AF37;
+margin-bottom:30px;
+}
+
+.inputBox{
+margin-bottom:20px;
+}
+
+.inputBox label{
+display:block;
+margin-bottom:8px;
+}
+
+.inputBox input,
+.inputBox select,
+.inputBox textarea{
+width:100%;
+padding:14px;
+border:none;
+border-radius:8px;
+background:#2b2b2b;
+color:white;
+font-size:16px;
+}
+
+textarea{
+height:120px;
+resize:none;
+}
+
+.btn{
+width:100%;
+padding:15px;
+border:none;
+background:#D4AF37;
+color:black;
+font-size:18px;
+font-weight:bold;
+border-radius:8px;
+cursor:pointer;
+margin-top:10px;
+}
+
+.btn:hover{
+background:white;
+}
+
+.whatsapp{
+display:block;
+text-align:center;
+margin-top:20px;
+padding:15px;
+background:#25D366;
+color:white;
+text-decoration:none;
+font-weight:bold;
+border-radius:8px;
+}
+
+footer{
+background:#111;
+padding:30px;
+text-align:center;
+margin-top:60px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<div class="logo">MANU PHOTOGRAPHY</div>
+
+<nav>
+
+<ul>
+
+<li><a href="index.html">Home</a></li>
+<li><a href="about.html">About</a></li>
+<li><a href="portfolio.html">Portfolio</a></li>
+<li><a href="services.html">Services</a></li>
+<li><a href="booking.html" class="active">Booking</a></li>
+<li><a href="gallery.html">Gallery</a></li>
+<li><a href="contact.html">Contact</a></li>
+
+</ul>
+
+</nav>
+
+</header>
+
+<section class="banner">
+
+<h1>Book Your Event</h1>
+
+</section>
+
+<section class="container">
+
+<h2>Booking Form</h2>
+
+<form id="bookingForm" enctype="multipart/form-data">
+
+<div class="inputBox">
+<label>Full Name</label>
+<input type="text" name="fullName" placeholder="Enter your name" required>
+</div>
+
+<div class="inputBox">
+<label>Mobile Number</label>
+<input type="tel" name="phone" placeholder="Enter mobile number" required>
+</div>
+
+<div class="inputBox">
+<label>Email</label>
+<input type="email" name="email" placeholder="Enter email" required>
+</div>
+
+<div class="inputBox">
+<label>Event Type</label>
+<select name="photoshootType" required>
+<option>Wedding</option>
+<option>Pre Wedding</option>
+<option>Haldi</option>
+<option>Mehendi</option>
+<option>Engagement</option>
+<option>Birthday</option>
+<option>Maternity</option>
+<option>Baby Shoot</option>
+<option>Halfsaree</option>
+<option>Corporate Event</option>
+</select>
+</div>
+
+<div class="inputBox">
+<label>Event Date</label>
+<input type="date" name="date" required>
+</div>
+
+<div class="inputBox">
+<label>Event Time</label>
+<input type="time" name="time" required>
+</div>
+
+<div class="inputBox">
+<label>Event Location</label>
+<input type="text" name="location" placeholder="Enter location">
+</div>
+
+<div class="inputBox">
+<label>No. of People</label>
+<input type="number" name="people" placeholder="Enter number of people" min="1">
+</div>
+
+<div class="inputBox">
+<label>Message</label>
+<textarea name="requirements" placeholder="Write your requirements..."></textarea>
+</div>
+
+<div class="inputBox">
+<label>Reference Image</label>
+<input type="file" name="referenceImage" accept="image/*">
+</div>
+
+<button class="btn" type="submit">Submit Booking</button>
+
+</form>
+
+<a class="whatsapp" href="https://wa.me/918019225206" target="_blank">
+Book on WhatsApp
+</a>
+
+</section>
+
+<footer>
+
+<h2 style="color:#D4AF37;">MANU PHOTOGRAPHY</h2>
+
+<p>Dreams Change Into Stories</p>
+
+<p>📞 +91 8019225206</p>
+
+<p>©2026 All Rights Reserved.</p>
+
+</footer>
+
+<script>
+document.getElementById('bookingForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  const form = e.target;
+  const url = 'http://localhost:8000/booking';
+  const data = new FormData(form);
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      body: data,
+    });
+
+    const result = await response.json();
+
+    if (response.ok && result.success) {
+      alert('Booking request submitted successfully.');
+      form.reset();
+    } else {
+      alert('Booking failed: ' + (result.message || 'Please try again.'));
+    }
+  } catch (error) {
+    alert('Booking failed: ' + error.message);
+  }
+});
+</script>
+
+</body>
+</html>

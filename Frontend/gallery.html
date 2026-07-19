@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wedding Gallery</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Lightbox -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css">
+
+    <style> 
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+html,
+body{
+width:100%;
+overflow-x:hidden;
+}
+
+body{
+background:#0d0d0d;
+color:white;
+}
+
+.gallery-section{
+            width:100vw;
+            margin:0;
+    padding:60px clamp(16px, 4vw, 48px);
+}
+
+.gallery-section h1{
+    text-align:center;
+    font-size:42px;
+    font-family:'Cinzel',serif;
+    color:#D4AF37;
+    margin-bottom:10px;
+}
+
+.gallery-section p{
+    text-align:center;
+    color:#cfcfcf;
+    margin-bottom:40px;
+}
+
+.gallery{
+
+    column-count:4;
+    column-gap:18px;
+
+}
+
+.gallery a{
+
+    display:block;
+    margin-bottom:18px;
+    position:relative;
+    overflow:hidden;
+    border-radius:15px;
+
+}
+
+.gallery img{
+
+    width:100%;
+    display:block;
+    border-radius:15px;
+
+    transition:.4s;
+
+}
+
+.gallery a::after{
+
+    content:"View";
+    position:absolute;
+
+    inset:0;
+
+    background:rgba(0,0,0,.35);
+
+    color:#D4AF37;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:22px;
+
+    opacity:0;
+
+    transition:.4s;
+
+}
+
+.gallery a:hover img{
+
+    transform:scale(1.08);
+
+}
+
+.gallery a:hover::after{
+
+    opacity:1;
+
+}
+
+@media(max-width:1100px){
+
+.gallery{
+
+column-count:3;
+
+}
+
+}
+
+@media(max-width:768px){
+
+.gallery{
+
+column-count:2;
+
+}
+
+}
+
+@media(max-width:500px){
+
+.gallery{
+
+column-count:1;
+
+}
+
+}
+    </style>
+</head>
+<body>
+
+<section class="gallery-section">
+
+    <h1 id="gallery-title">GALLERY</h1>
+    <p>Capturing timeless memories.</p>
+
+    <div class="gallery" id="gallery"></div>
+
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
+
+<script>
+function getGalleryFolder() {
+
+    const params = new URLSearchParams(window.location.search);
+    const folder = params.get("folder");
+    const service = params.get("service");
+
+    if (folder) {
+        return folder.replace("/\/+$,", "");
+    }
+
+    if (service) {
+        return service.replace("/\/+$|\s+$/g", "").trim();
+    }
+
+    return "photos/Wedding";
+
+}
+
+function getGalleryTitle(folder) {
+
+    const parts = folder.split("/").filter(Boolean);
+    const lastPart = parts[parts.length - 1] || "Gallery";
+
+    return `${lastPart.toUpperCase()} GALLERY`;
+
+}
+
+async function loadGallery(folder = getGalleryFolder()) {
+
+    const gallery = document.getElementById("gallery");
+    const title = document.getElementById("gallery-title");
+
+    if (title) {
+        title.textContent = getGalleryTitle(folder);
+    }
+
+    gallery.innerHTML = `
+        <p style="text-align:center;color:#D4AF37;">
+            Loading gallery...
+        </p>
+    `;
+
+    try {
+
+        const encodedFolder = folder
+            .split("/")
+            .map(part => encodeURIComponent(part))
+            .join("/");
+
+        const isFileProtocol = window.location.protocol === "file:" || window.location.origin === "null";
+        const apiBase = isFileProtocol
+            ? "http://127.0.0.1:8000"
+            : window.location.origin;
+
+        const response = await fetch(`${apiBase}/gallery/${encodedFolder}`);
+
+        if (!response.ok) {
+            const details = await response.text();
+            throw new Error(`Failed to load gallery (${response.status}): ${details}`);
+        }
+
+        const images = await response.json();
+
+        gallery.innerHTML = "";
+
+        images.forEach(image => {
+
+            const a = document.createElement("a");
+            a.href = image.url;
+            a.className = "glightbox";
+
+            const img = document.createElement("img");
+            img.src = image.url;
+            img.alt = image.id;
+            img.loading = "lazy";
+
+            a.appendChild(img);
+            gallery.appendChild(a);
+
+        });
+
+        GLightbox({
+            touchNavigation: true,
+            loop: true,
+            zoomable: true,
+            openEffect: "zoom",
+            closeEffect: "fade"
+        });
+
+    } catch (error) {
+
+        gallery.innerHTML = `
+            <p style="text-align:center;color:red;">
+                Failed to load gallery. ${error.message}
+            </p>
+        `;
+
+        console.error("Gallery load error:", error);
+
+    }
+
+}
+
+loadGallery();
+
+
+</script>
+
+</body>
+</html>

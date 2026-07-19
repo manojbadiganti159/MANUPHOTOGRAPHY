@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Portfolio | MANU PHOTOGRAPHY</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Poppins,sans-serif;
+}
+
+body{
+background:#0d0d0d;
+color:white;
+}
+
+header{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+background:#000;
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:20px 60px;
+z-index:1000;
+}
+
+.logo{
+font-size:30px;
+font-family:Cinzel;
+color:#D4AF37;
+}
+
+nav ul{
+display:flex;
+list-style:none;
+}
+
+nav ul li{
+margin-left:30px;
+}
+
+nav ul li a{
+text-decoration:none;
+color:#fff;
+transition:.3s;
+}
+
+nav ul li a:hover,
+.active{
+color:#D4AF37;
+}
+
+.banner{
+margin-top:80px;
+height:45vh;
+background:url("photo-h.jpg") center/cover;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+.banner h1{
+font-size:60px;
+font-family:Cinzel;
+color:#D4AF37;
+}
+
+.categories{
+padding:50px 10%;
+text-align:center;
+}
+
+.categories h2{
+font-family:Cinzel;
+color:#D4AF37;
+margin-bottom:30px;
+font-size:40px;
+}
+
+.buttons{
+display:flex;
+justify-content:center;
+flex-wrap:wrap;
+gap:15px;
+}
+
+.buttons button{
+
+padding:12px 25px;
+border:none;
+background:#181818;
+color:white;
+border-radius:30px;
+cursor:pointer;
+transition:.3s;
+
+}
+
+.buttons button:hover{
+
+background:#D4AF37;
+color:#000;
+
+}
+
+.gallery{
+
+padding:20px 10% 80px;
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+
+gap:25px;
+
+}
+
+.card{
+
+background:#181818;
+border-radius:12px;
+overflow:hidden;
+transition:.4s;
+
+}
+
+.card:hover{
+
+transform:translateY(-10px);
+
+}
+
+.card img{
+
+width:100%;
+height:250px;
+object-fit:cover;
+
+}
+
+.card h3{
+
+padding:20px;
+text-align:center;
+color:#D4AF37;
+
+}
+
+footer{
+
+background:#111;
+padding:30px;
+text-align:center;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<div class="logo">MANU PHOTOGRAPHY</div>
+
+<nav>
+
+<ul>
+
+<li><a href="index.html">Home</a></li>
+
+<li><a href="about.html">About</a></li>
+
+<li><a href="portfolio.html" class="active">Portfolio</a></li>
+
+<li><a href="services.html">Services</a></li>
+
+<li><a href="booking.html">Booking</a></li>
+
+<li><a href="gallery.html">Gallery</a></li>
+
+<li><a href="contact.html">Contact</a></li>
+
+</ul>
+
+</nav>
+
+</header>
+
+<section class="banner">
+
+
+
+</section>
+
+<section class="categories">
+
+<h2>Photography Categories</h2>
+
+<div class="buttons">
+
+<a class="service-link" href="gallery.html?folder=photos"><button data-folder="photos">All</button></a>
+<a class="service-link" href="gallery.html?folder=photos/Wedding"><button data-folder="photos/Wedding">Wedding</button></a>
+<a class="service-link" href="gallery.html?folder=photos/Pre Wedding"><button data-folder="photos/Pre Wedding">Pre Wedding</button></a>
+<a class="service-link" href="gallery.html?folder=photos/Haldi"><button data-folder="photos/Haldi">Haldi</button></a>
+<a class="service-link" href="gallery.html?folder=photos/Mehendi"><button data-folder="photos/Mehendi">Mehendi</button></a>
+<a class="service-link" href="gallery.html?folder=photos/Engagement"><button data-folder="photos/Engagement">Engagement</button></a>
+<a class="service-link" href="gallery.html?folder=photos/Bride"><button data-folder="photos/Bride">Bride</button></a>
+<a class="service-link" href="gallery.html?folder=photos/Groom"><button data-folder="photos/Groom">Groom</button></a>
+<a class="service-link" href="gallery.html?folder=photos/Halfsaree"><button data-folder="photos/Halfsaree">Halfsaree</button></a>
+<a class="service-link" href="gallery.html?folder=photos/Birthday"><button data-folder="photos/Birthday">Birthday</button></a>
+<a class="service-link" href="gallery.html?folder=photos/Baby Shoot"><button data-folder="photos/Baby Shoot">Baby Shoot</button></a>
+<a class="service-link" href="gallery.html?folder=photos/Maternity"><button data-folder="photos/Maternity">Maternity</button></a>
+<a class="service-link" href="gallery.html?folder=photos/Drone"><button data-folder="photos/Drone">Drone</button></a>
+<a class="service-link" href="gallery.html?folder=photos/Cinematic"><button data-folder="photos/Cinematic">Cinematic</button></a>
+
+</section>
+
+
+</section>
+
+<footer>
+
+<h2 style="color:#a5861d;">MANU PHOTOGRAPHY</h2>
+
+<p>Dreams Change Into Stories</p>
+
+<p>© 2026 MANU PHOTOGRAPHY. All Rights Reserved.</p>
+
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+	document.querySelectorAll('.buttons button').forEach(function (btn) {
+		btn.addEventListener('click', function () {
+			const folder = btn.dataset.folder || btn.textContent.trim();
+			window.location.href = `gallery.html?folder=${encodeURIComponent(folder)}`;
+		});
+	});
+});
+</script>
+
+</body>
+</html>

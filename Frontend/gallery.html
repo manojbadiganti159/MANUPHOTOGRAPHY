@@ -163,14 +163,9 @@ function getGalleryFolder() {
 
     const params = new URLSearchParams(window.location.search);
     const folder = params.get("folder");
-    const service = params.get("service");
 
     if (folder) {
-        return folder.replace("/\/+$,", "");
-    }
-
-    if (service) {
-        return service.replace("/\/+$|\s+$/g", "").trim();
+        return folder.replace(/\/+$/, "");
     }
 
     return "photos/Wedding";
@@ -208,16 +203,10 @@ async function loadGallery(folder = getGalleryFolder()) {
             .map(part => encodeURIComponent(part))
             .join("/");
 
-        const isFileProtocol = window.location.protocol === "file:" || window.location.origin === "null";
-        const apiBase = isFileProtocol
-            ? "http://127.0.0.1:8000"
-            : window.location.origin;
-
-        const response = await fetch(`${apiBase}/gallery/${encodedFolder}`);
+        const response = await fetch(`http://127.0.0.1:8000/gallery/${encodedFolder}`);
 
         if (!response.ok) {
-            const details = await response.text();
-            throw new Error(`Failed to load gallery (${response.status}): ${details}`);
+            throw new Error("Failed to load gallery");
         }
 
         const images = await response.json();
@@ -252,11 +241,11 @@ async function loadGallery(folder = getGalleryFolder()) {
 
         gallery.innerHTML = `
             <p style="text-align:center;color:red;">
-                Failed to load gallery. ${error.message}
+                Failed to load gallery.
             </p>
         `;
 
-        console.error("Gallery load error:", error);
+        console.error(error);
 
     }
 

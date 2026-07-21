@@ -2,33 +2,25 @@ from fastapi import FastAPI, Form, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 
-import cloudinary
-import cloudinary.api
 import os
 import smtplib
 from email.message import EmailMessage
-from pathlib import Path
 
-# Load environment variables from this file's directory
-base_dir = Path(__file__).resolve().parent
-load_dotenv(base_dir / ".env")
+import cloudinary
+import cloudinary.api
+
+# Load environment variables
+load_dotenv()
+
+cloudinary.config(
+    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.getenv("CLOUDINARY_API_KEY"),
+    api_secret=os.getenv("CLOUDINARY_API_SECRET"),
+    secure=True
+)
 
 EMAIL_USER = os.getenv("EMAIL_USER")
 EMAIL_PASS = os.getenv("EMAIL_PASS")
-
-cloudinary.config(
-    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
-    api_key=os.getenv("CLOUDINARY_API_KEY"),
-    api_secret=os.getenv("CLOUDINARY_API_SECRET"),
-    secure=True
-)
-
-cloudinary.config(
-    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
-    api_key=os.getenv("CLOUDINARY_API_KEY"),
-    api_secret=os.getenv("CLOUDINARY_API_SECRET"),
-    secure=True
-)
 
 app = FastAPI(title="Photo Studio Booking API")
 
@@ -41,7 +33,26 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/gallery/{folder:path}")
+def get_gallery(folder: str):
 
+    result = cloudinary.api.resources(
+        type="upload",
+        max_results=100
+    )
+
+    images = []
+
+    for item in result["resources"]:
+        asset_folder = item.get("asset_folder")
+
+        if asset_folder == folder or item["public_id"].startswith(f"{folder}/"):
+            images.append({
+                "id": item["public_id"],
+                "url": item["secure_url"]
+            })
+
+    return images
 @app.get("/")
 def home():
     return {
@@ -54,33 +65,6 @@ def health():
     return {
         "status": "OK"
     }
-
-
-@app.get("/gallery/{folder:path}")
-def get_gallery(folder: str):
-    folder = folder.strip("/")
-
-    try:
-        result = cloudinary.api.resources(
-            type="upload",
-            prefix=folder,
-            max_results=100
-        )
-    except Exception as exc:
-        return {
-            "success": False,
-            "message": f"Cloudinary gallery error: {exc}"
-        }
-
-    images = []
-    for item in result.get("resources", []):
-        if item.get("public_id", "").startswith(f"{folder}/") or item.get("asset_folder") == folder:
-            images.append({
-                "id": item["public_id"],
-                "url": item.get("secure_url")
-            })
-
-    return images
 
 
 @app.post("/booking")
@@ -115,7 +99,7 @@ async def booking(
         ">
 
             <h2 style="color:#c58b2b;">
-                 New Booking Request
+                📸 New Booking Request
             </h2>
 
             <hr>
@@ -143,7 +127,7 @@ async def booking(
 
             <hr>
 
-            <h3> Booking Details</h3>
+            <h3>📅 Booking Details</h3>
 
             <table style="width:100%;border-collapse:collapse;">
 
@@ -221,14 +205,10 @@ async def booking(
             )
 
         # Send Email
-        if not EMAIL_USER or not EMAIL_PASS:
-            return {
-                "success": False,
-                "message": "Email credentials are not configured. Please set EMAIL_USER and EMAIL_PASS in .env."
-            }
-
         with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
+
             smtp.login(EMAIL_USER, EMAIL_PASS)
+
             smtp.send_message(msg)
 
         return {
@@ -236,12 +216,8 @@ async def booking(
             "message": "Booking request sent successfully."
         }
 
-    except smtplib.SMTPAuthenticationError:
-        return {
-            "success": False,
-            "message": "SMTP authentication failed. Verify your Gmail credentials and app password, and allow SMTP access if using Gmail."
-        }
     except Exception as e:
+
         return {
             "success": False,
             "message": str(e)

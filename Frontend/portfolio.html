@@ -212,20 +212,20 @@ text-align:center;
 
 <div class="buttons">
 
-<a class="service-link" href="gallery.html?folder=photos"><button data-folder="photos">All</button></a>
-<a class="service-link" href="gallery.html?folder=photos/Wedding"><button data-folder="photos/Wedding">Wedding</button></a>
-<a class="service-link" href="gallery.html?folder=photos/Pre Wedding"><button data-folder="photos/Pre Wedding">Pre Wedding</button></a>
-<a class="service-link" href="gallery.html?folder=photos/Haldi"><button data-folder="photos/Haldi">Haldi</button></a>
-<a class="service-link" href="gallery.html?folder=photos/Mehendi"><button data-folder="photos/Mehendi">Mehendi</button></a>
-<a class="service-link" href="gallery.html?folder=photos/Engagement"><button data-folder="photos/Engagement">Engagement</button></a>
-<a class="service-link" href="gallery.html?folder=photos/Bride"><button data-folder="photos/Bride">Bride</button></a>
-<a class="service-link" href="gallery.html?folder=photos/Groom"><button data-folder="photos/Groom">Groom</button></a>
-<a class="service-link" href="gallery.html?folder=photos/Halfsaree"><button data-folder="photos/Halfsaree">Halfsaree</button></a>
-<a class="service-link" href="gallery.html?folder=photos/Birthday"><button data-folder="photos/Birthday">Birthday</button></a>
-<a class="service-link" href="gallery.html?folder=photos/Baby Shoot"><button data-folder="photos/Baby Shoot">Baby Shoot</button></a>
-<a class="service-link" href="gallery.html?folder=photos/Maternity"><button data-folder="photos/Maternity">Maternity</button></a>
-<a class="service-link" href="gallery.html?folder=photos/Drone"><button data-folder="photos/Drone">Drone</button></a>
-<a class="service-link" href="gallery.html?folder=photos/Cinematic"><button data-folder="photos/Cinematic">Cinematic</button></a>
+<a class="service-link" href="gallery.html?folder=photos"><div class="card"><button data-folder="photos">All</button></div></a>
+<a class="service-link" href="gallery.html?folder=photos/Wedding"><div class="card"><button data-folder="photos/Wedding">Wedding</button></div></a>
+<a class="service-link" href="gallery.html?folder=photos/Pre Wedding"><div class="card"><button data-folder="photos/Pre Wedding">Pre Wedding</button></div></a>
+<a class="service-link" href="gallery.html?folder=photos/Haldi"><div class="card"><button data-folder="photos/Haldi">Haldi</button></div></a>
+<a class="service-link" href="gallery.html?folder=photos/Mehendi"><div class="card"><button data-folder="photos/Mehendi">Mehendi</button></div></a>
+<a class="service-link" href="gallery.html?folder=photos/Engagement"><div class="card"><button data-folder="photos/Engagement">Engagement</button></div></a>
+<a class="service-link" href="gallery.html?folder=photos/Bride"><div class="card"><button data-folder="photos/Bride">Bride</button></div></a>
+<a class="service-link" href="gallery.html?folder=photos/Groom"><div class="card"><button data-folder="photos/Groom">Groom</button></div></a>
+<a class="service-link" href="gallery.html?folder=photos/Halfsaree"><div class="card"><button data-folder="photos/Halfsaree">Halfsaree</button></div></a>
+<a class="service-link" href="gallery.html?folder=photos/Birthday"><div class="card"><button data-folder="photos/Birthday">Birthday</button></div></a>
+<a class="service-link" href="gallery.html?folder=photos/Baby Shoot"><div class="card"><button data-folder="photos/Baby Shoot">Baby Shoot</button></div></a>
+<a class="service-link" href="gallery.html?folder=photos/Maternity"><div class="card"><button data-folder="photos/Maternity">Maternity</button></div></a>
+<a class="service-link" href="gallery.html?folder=photos/Drone"><div class="card"><button data-folder="photos/Drone">Drone</button></div></a>
+<a class="service-link" href="gallery.html?folder=photos/Cinematic"><div class="card"><button data-folder="photos/Cinematic">Cinematic</button></div></a>
 
 </section>
 
@@ -242,16 +242,7 @@ text-align:center;
 
 </footer>
 
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-	document.querySelectorAll('.buttons button').forEach(function (btn) {
-		btn.addEventListener('click', function () {
-			const folder = btn.dataset.folder || btn.textContent.trim();
-			window.location.href = `gallery.html?folder=${encodeURIComponent(folder)}`;
-		});
-	});
-});
-</script>
+
 
 </body>
 </html>

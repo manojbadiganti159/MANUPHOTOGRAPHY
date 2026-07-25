@@ -24,6 +24,23 @@ EMAIL_PASS = os.getenv("EMAIL_PASS")
 
 app = FastAPI(title="Photo Studio Booking API")
 
+from fastapi.staticfiles import StaticFiles
+
+
+def send_email_message(to_email: str, subject: str, message: str):
+    if not EMAIL_USER or not EMAIL_PASS:
+        raise RuntimeError("Email credentials are not configured.")
+
+    msg = EmailMessage()
+    msg["Subject"] = subject
+    msg["From"] = EMAIL_USER
+    msg["To"] = to_email
+    msg.set_content(message)
+
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
+        smtp.login(EMAIL_USER, EMAIL_PASS)
+        smtp.send_message(msg)
+
 # CORS
 app.add_middleware(
     CORSMiddleware,
@@ -44,15 +61,76 @@ def get_gallery(folder: str):
     images = []
 
     for item in result["resources"]:
-        asset_folder = item.get("asset_folder")
 
-        if asset_folder == folder or item["public_id"].startswith(f"{folder}/"):
+        asset_folder = item.get("asset_folder", "")
+
+        if folder == "photos":
+            if asset_folder.startswith("photos/"):
+                images.append({
+                    "id": item["public_id"],
+                    "url": item["secure_url"]
+                })
+
+        elif asset_folder == folder:
             images.append({
                 "id": item["public_id"],
                 "url": item["secure_url"]
             })
 
+    for item in result["resources"]:
+        print(
+            item["public_id"],
+            " | asset_folder =", item.get("asset_folder")
+        )
     return images
+
+@app.get("/recent")
+def get_recent_images():
+
+    result = cloudinary.api.resources(
+        type="upload",
+        max_results=100
+    )
+
+    images = []
+
+    for item in result["resources"]:
+
+        asset_folder = item.get("asset_folder", "")
+
+        if asset_folder.startswith("photos"):
+
+            images.append({
+                "id": item["public_id"],
+                "url": item["secure_url"],
+                "folder": asset_folder,
+                "created_at": item["created_at"]
+            })
+    images.sort(
+        key=lambda x: x["created_at"],
+        reverse=True
+    )
+
+    return images[:10]
+
+@app.post("/send-email")
+async def send_email(
+    to_email: str = Form(...),
+    subject: str = Form(...),
+    message: str = Form(...)
+):
+    try:
+        send_email_message(to_email, subject, message)
+        return {
+            "success": True,
+            "message": "Email sent successfully."
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "message": str(e)
+        }
+
 @app.get("/")
 def home():
     return {

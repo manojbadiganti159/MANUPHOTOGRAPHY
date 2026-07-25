@@ -8,7 +8,15 @@
 <title>Booking | MANU PHOTOGRAPHY</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
 
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+
+<link rel="manifest" href="site.webmanifest">
 <style>
 
 *{
@@ -33,13 +41,45 @@ justify-content:space-between;
 align-items:center;
 padding:20px 60px;
 background:#000;
-z-index:1000;
+z-index:1003;
 }
 
 .logo{
+display:flex;
+align-items:center;
+gap:12px;
 font-size:30px;
 font-family:Cinzel;
 color:#D4AF37;
+text-decoration:none;
+font-weight:bold;
+}
+
+.logo img{
+width:44px;
+height:44px;
+object-fit:cover;
+border-radius:50%;
+flex:none;
+}
+
+.menu-toggle{
+display:none;
+flex-direction:column;
+gap:5px;
+background:transparent;
+border:none;
+cursor:pointer;
+padding:0;
+margin-left:auto;
+z-index:1004;
+}
+
+.menu-toggle span{
+width:28px;
+height:2px;
+background:#fff;
+transition:all .3s ease;
 }
 
 nav ul{
@@ -61,6 +101,44 @@ nav ul li a:hover,
 .active{
 color:#D4AF37;
 }
+
+@media(max-width:900px){
+header{padding:16px 18px;gap:14px;}
+
+.logo{font-size:24px;gap:10px;line-height:1.05;}
+
+.logo img{width:34px;height:34px;}
+
+.menu-toggle{display:flex;}
+nav{
+position:fixed;
+top:0;
+left:-100%;
+width:280px;
+height:100vh;
+background:#050505;
+padding:90px 24px 24px;
+transition:left .3s ease;
+box-shadow:8px 0 30px rgba(0,0,0,.45);
+z-index:1002;
+border-right:1px solid rgba(212,175,55,0.3);
+}
+nav.open{left:0;}
+nav ul{flex-direction:column;gap:18px;align-items:flex-start;}
+nav ul li{margin-left:0;}
+nav ul li a{display:block;font-size:18px;padding:12px 6px;width:100%;}
+}
+
+body.menu-open::before{
+content:"";
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.55);
+z-index:1001;
+pointer-events:auto;
+}
+
+body.menu-open{overflow:hidden;}
 
 .banner{
 margin-top:80px;
@@ -130,10 +208,37 @@ font-weight:bold;
 border-radius:8px;
 cursor:pointer;
 margin-top:10px;
+transition:all 0.3s ease;
 }
 
 .btn:hover{
 background:white;
+}
+
+.btn:disabled{
+cursor:not-allowed;
+opacity:0.8;
+}
+
+.status-message{
+margin-top:15px;
+padding:12px;
+text-align:center;
+border-radius:8px;
+display:none;
+font-weight:bold;
+}
+
+.status-message.success{
+display:block;
+background:#1f4d2e;
+color:#fff;
+}
+
+.status-message.error{
+display:block;
+background:#7d2d2d;
+color:#fff;
 }
 
 .whatsapp{
@@ -163,7 +268,11 @@ margin-top:60px;
 
 <header>
 
-<div class="logo">MANU PHOTOGRAPHY</div>
+<div class="logo"><img src="Untitled design (4).png" alt="MANU Photography logo" referrerpolicy="no-referrer">MANU PHOTOGRAPHY</div>
+
+<button class="menu-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false">
+<span></span><span></span><span></span>
+</button>
 
 <nav>
 
@@ -257,6 +366,7 @@ margin-top:60px;
 </div>
 
 <button class="btn" type="submit">Submit Booking</button>
+<div id="statusMessage" class="status-message"></div>
 
 </form>
 
@@ -268,23 +378,84 @@ Book on WhatsApp
 
 <footer>
 
-<h2 style="color:#D4AF37;">MANU PHOTOGRAPHY</h2>
+<h2 style="color:#a5861d;">MANU PHOTOGRAPHY</h2>
 
 <p>Dreams Change Into Stories</p>
 
 <p>📞 +91 8019225206</p>
 
-<p>©2026 All Rights Reserved.</p>
+<p>© 2026 MANU PHOTOGRAPHY. All Rights Reserved.</p>
 
 </footer>
 
 <script>
-document.getElementById('bookingForm').addEventListener('submit', async function(e) {
+const bookingForm = document.getElementById('bookingForm');
+const submitButton = bookingForm.querySelector('button[type="submit"]');
+const statusMessage = document.getElementById('statusMessage');
+const dateInput = bookingForm.querySelector('input[name="date"]');
+const timeInput = bookingForm.querySelector('input[name="time"]');
+
+function getTodayString() {
+  const today = new Date();
+  return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+}
+
+function isFutureDateTime(dateValue, timeValue) {
+  if (!dateValue || !timeValue) return false;
+
+  const [year, month, day] = dateValue.split('-').map(Number);
+  const [hours, minutes] = timeValue.split(':').map(Number);
+
+  const selectedDateTime = new Date(year, month - 1, day, hours, minutes);
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+  if (selectedDateTime < today) {
+    return false;
+  }
+
+  if (selectedDateTime.getTime() === today.getTime()) {
+    return selectedDateTime > now;
+  }
+
+  return true;
+}
+
+function validateBookingDateTime() {
+  if (!isFutureDateTime(dateInput.value, timeInput.value)) {
+    alert('Please choose a future date and time. Past or current slots are not available.');
+    return false;
+  }
+  return true;
+}
+
+dateInput.min = getTodayString();
+
+dateInput.addEventListener('change', function () {
+  if (dateInput.value === getTodayString()) {
+    const now = new Date();
+    const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    timeInput.min = currentTime;
+  } else {
+    timeInput.removeAttribute('min');
+  }
+});
+
+bookingForm.addEventListener('submit', async function(e) {
   e.preventDefault();
+
+  if (!validateBookingDateTime()) {
+    return;
+  }
 
   const form = e.target;
   const url = 'http://localhost:8000/booking';
   const data = new FormData(form);
+
+  submitButton.disabled = true;
+  submitButton.textContent = 'Submitting...';
+  statusMessage.className = 'status-message';
+  statusMessage.textContent = '';
 
   try {
     const response = await fetch(url, {
@@ -295,16 +466,90 @@ document.getElementById('bookingForm').addEventListener('submit', async function
     const result = await response.json();
 
     if (response.ok && result.success) {
-      alert('Booking request submitted successfully.');
-      form.reset();
+      submitButton.textContent = 'Submitted';
+      submitButton.style.background = '#2ecc71';
+      submitButton.style.color = '#fff';
+      statusMessage.className = 'status-message success';
+      statusMessage.textContent = 'Booking submitted successfully. A copy of your request has been sent to your email.';
+
+      const formValues = Object.fromEntries(data.entries());
+      localStorage.setItem('bookingDraft', JSON.stringify(formValues));
+
+      const emailData = new FormData();
+      emailData.append('to_email', formValues.email);
+      emailData.append('subject', 'Your booking request has been received');
+      emailData.append('message', `Hello ${formValues.fullName},\n\nYour booking request has been received.\n\nEvent Type: ${formValues.photoshootType}\nDate: ${formValues.date}\nTime: ${formValues.time}\nLocation: ${formValues.location || 'Not provided'}\nPeople: ${formValues.people || 'Not provided'}\nRequirements: ${formValues.requirements || 'Not provided'}\n\nWe will contact you soon.\n\nThanks,\nMANU PHOTOGRAPHY`);
+
+      await fetch('http://localhost:8000/send-email', {
+        method: 'POST',
+        body: emailData,
+      });
     } else {
-      alert('Booking failed: ' + (result.message || 'Please try again.'));
+      submitButton.disabled = false;
+      submitButton.textContent = 'Submit Booking';
+      submitButton.style.background = '#D4AF37';
+      submitButton.style.color = 'black';
+      statusMessage.className = 'status-message error';
+      statusMessage.textContent = 'Booking failed: ' + (result.message || 'Please try again.');
     }
   } catch (error) {
-    alert('Booking failed: ' + error.message);
+    submitButton.disabled = false;
+    submitButton.textContent = 'Submit Booking';
+    submitButton.style.background = '#D4AF37';
+    submitButton.style.color = 'black';
+    statusMessage.className = 'status-message error';
+    statusMessage.textContent = 'Booking failed: ' + error.message;
+  }
+});
+
+window.addEventListener('load', function () {
+  const savedDraft = localStorage.getItem('bookingDraft');
+  if (savedDraft) {
+    const values = JSON.parse(savedDraft);
+    Object.entries(values).forEach(([name, value]) => {
+      const field = bookingForm.elements[name];
+      if (field) {
+        field.value = value;
+      }
+    });
+    submitButton.textContent = 'Submitted';
+    submitButton.disabled = true;
+    submitButton.style.background = '#2ecc71';
+    submitButton.style.color = '#fff';
+    statusMessage.className = 'status-message success';
+    statusMessage.textContent = 'Your previous booking details are saved. You can review them below.';
   }
 });
 </script>
 
+<script>
+const menuToggle = document.querySelector('.menu-toggle');
+const nav = document.querySelector('nav');
+if (menuToggle && nav) {
+  menuToggle.addEventListener('click', () => {
+    const isOpen = nav.classList.toggle('open');
+    document.body.classList.toggle('menu-open', isOpen);
+    menuToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  });
+
+  document.addEventListener('click', (event) => {
+    if (window.innerWidth <= 900 && nav.classList.contains('open') && !nav.contains(event.target) && !menuToggle.contains(event.target)) {
+      nav.classList.remove('open');
+      document.body.classList.remove('menu-open');
+      menuToggle.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  document.querySelectorAll('nav a').forEach(link => {
+    link.addEventListener('click', () => {
+      if (window.innerWidth <= 900) {
+        nav.classList.remove('open');
+        document.body.classList.remove('menu-open');
+        menuToggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+  });
+}
+</script>
 </body>
 </html>

@@ -6,7 +6,18 @@
 <title>MANU PHOTOGRAPHY</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link
+rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
 
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+
+<link rel="manifest" href="site.webmanifest">
 <style>
 
 *{
@@ -32,7 +43,7 @@ align-items:center;
 padding:20px 70px;
 background:rgba(0,0,0,.75);
 backdrop-filter:blur(8px);
-z-index:1000;
+z-index:1003;
 }
 
 .logo{
@@ -43,6 +54,7 @@ font-size:32px;
 font-family:'Cinzel',serif;
 color:#D4AF37;
 font-weight:bold;
+text-decoration:none;
 }
 
 .logo img{
@@ -52,6 +64,25 @@ object-fit:cover;
 border-radius:50%;
 display:block;
 flex:none;
+}
+
+.menu-toggle{
+display:none;
+flex-direction:column;
+gap:5px;
+background:transparent;
+border:none;
+cursor:pointer;
+padding:0;
+margin-left:auto;
+z-index:1004;
+}
+
+.menu-toggle span{
+width:28px;
+height:2px;
+background:#fff;
+transition:all .3s ease;
 }
 
 nav ul{
@@ -73,6 +104,44 @@ transition:.3s;
 nav ul li a:hover{
 color:#D4AF37;
 }
+
+@media(max-width:900px){
+header{padding:16px 18px;gap:14px;}
+
+.logo{font-size:24px;gap:10px;line-height:1.05;}
+
+.logo img{width:34px;height:34px;}
+
+.menu-toggle{display:flex;}
+nav{
+position:fixed;
+top:0;
+left:-100%;
+width:280px;
+height:100vh;
+background:#050505;
+padding:90px 24px 24px;
+transition:left .3s ease;
+box-shadow:8px 0 30px rgba(0,0,0,.45);
+z-index:1002;
+border-right:1px solid rgba(212,175,55,0.3);
+}
+nav.open{left:0;}
+nav ul{flex-direction:column;gap:18px;align-items:flex-start;}
+nav ul li{margin-left:0;}
+nav ul li a{display:block;font-size:18px;padding:12px 6px;width:100%;}
+}
+
+body.menu-open::before{
+content:"";
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.55);
+z-index:1001;
+pointer-events:auto;
+}
+
+body.menu-open{overflow:hidden;}
 
 .hero{
 height:100vh;
@@ -170,14 +239,231 @@ color:#D4AF37;
 margin-bottom:15px;
 }
 
+.recent-work{
+
+    padding:70px 0;
+    background:#0d0d0d;
+
+}
+
+.recent-header{
+
+    padding:0 5%;
+    margin-bottom:25px;
+
+}
+
+.recent-header h2{
+
+    font-family:'Cinzel',serif;
+    font-size:36px;
+    color:#D4AF37;
+
+}
+
+.carousel-wrapper{
+
+    position:relative;
+
+}
+
+.recent-slider{
+
+    display:flex;
+    gap:22px;
+
+    overflow-x:auto;
+    scroll-behavior:smooth;
+
+    padding:0 5%;
+
+    scrollbar-width:none;
+
+}
+
+.recent-slider::-webkit-scrollbar{
+
+    display:none;
+
+}
+
+.recent-card{
+
+    flex:0 0 340px;
+
+    height:500px;
+
+    border-radius:18px;
+
+    overflow:hidden;
+
+    position:relative;
+
+    transition:.35s;
+
+    text-decoration:none;
+
+}
+
+.recent-card img{
+
+    width:100%;
+    height:100%;
+
+    object-fit:cover;
+
+    transition:.5s;
+
+}
+
+.recent-card:hover{
+
+    transform:scale(1.07);
+
+    z-index:10;
+
+}
+
+.recent-card:hover img{
+
+    transform:scale(1.12);
+
+}
+
+.recent-card::before{
+
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    background:linear-gradient(
+        to top,
+        rgba(0,0,0,.85),
+        rgba(0,0,0,.1)
+    );
+
+    opacity:0;
+
+    transition:.35s;
+
+}
+
+.recent-card:hover::before{
+
+    opacity:1;
+
+}
+
+.recent-card::after{
+
+    content:"View Gallery";
+
+    position:absolute;
+
+    bottom:25px;
+
+    left:25px;
+
+    color:white;
+
+    font-size:18px;
+
+    letter-spacing:1px;
+
+    opacity:0;
+
+    transition:.35s;
+
+}
+
+.recent-card:hover::after{
+
+    opacity:1;
+
+}
+
+.scroll-btn{
+
+    position:absolute;
+
+    top:50%;
+
+    transform:translateY(-50%);
+
+    width:55px;
+    height:55px;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:rgba(0,0,0,.65);
+
+    color:white;
+
+    font-size:28px;
+
+    cursor:pointer;
+
+    z-index:100;
+
+    transition:.3s;
+
+}
+
+.scroll-btn:hover{
+
+    background:#D4AF37;
+
+    color:black;
+
+}
+
+.left{
+
+    left:15px;
+
+}
+
+.right{
+
+    right:15px;
+
+}
+
+@media(max-width:768px){
+
+.recent-card{
+
+    flex:0 0 220px;
+
+    height:330px;
+
+}
+
+.recent-header h2{
+
+    font-size:28px;
+
+}
+
+}
+
 </style>
 
 </head>
 <body>
 
 <header>
-<div class="logo"><img src="Untitled design (4).png" alt="MANU Photography logo" referrerpolicy="no-referrer">MANU PHOTOGRAPHY</div>
-
+<a class="logo" href="index.html">
+<img src="Untitled design (4).png" alt="MANU Photography logo" referrerpolicy="no-referrer">
+<span>MANU PHOTOGRAPHY</span>
+</a>
+<button class="menu-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false">
+<span></span><span></span><span></span>
+</button>
 <nav>
 
 <ul>
@@ -206,6 +492,23 @@ margin-bottom:15px;
 
 
 </div>
+
+</section>
+<section class="recent-work">
+
+    <div class="recent-header">
+        <h2>Recent Work</h2>
+    </div>
+
+    <div class="carousel-wrapper">
+
+        <button class="scroll-btn left">&#10094;</button>
+
+        <div class="recent-slider" id="recentSlider"></div>
+
+        <button class="scroll-btn right">&#10095;</button>
+
+    </div>
 
 </section>
 
@@ -255,7 +558,7 @@ margin-bottom:15px;
 
 <footer>
 
-<h2>MANU PHOTOGRAPHY</h2>
+<h2 style="color:#a5861d;">MANU PHOTOGRAPHY</h2>
 
 <p>Dreams Change Into Stories</p>
 
@@ -264,6 +567,136 @@ margin-bottom:15px;
 <p>© 2026 MANU PHOTOGRAPHY. All Rights Reserved.</p>
 
 </footer>
+
+<script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
+
+<script>
+const slider = document.getElementById("recentSlider");
+
+async function loadRecentImages() {
+
+    try {
+
+        const response = await fetch("http://192.168.1.5:8000/recent");
+
+        const images = await response.json();
+
+        slider.innerHTML = "";
+
+        images.forEach(image => {
+
+            slider.innerHTML += `
+                <a href="gallery.html?folder=${encodeURIComponent(image.folder)}"
+   class="recent-card">
+                    <img src="${image.url}" loading="lazy">
+
+                </a>
+            `;
+
+        });
+
+       const lightbox = GLightbox({
+        selector: ".glightbox",
+        touchNavigation: true,
+        loop: true,
+        zoomable: true,
+        openEffect: "zoom",
+        closeEffect: "fade"
+    });
+
+    } catch(err) {
+
+        console.log(err);
+
+    }
+
+}
+
+loadRecentImages();
+
+document.querySelector(".left").onclick = () => {
+
+    slider.scrollBy({
+
+        left:-380,
+
+        behavior:"smooth"
+
+    });
+
+};
+
+document.querySelector(".right").onclick = () => {
+
+    slider.scrollBy({
+
+        left:380,
+
+        behavior:"smooth"
+
+    });
+
+};
+
+setInterval(() => {
+
+    if (
+        slider.scrollLeft + slider.clientWidth >=
+        slider.scrollWidth - 20
+    ) {
+
+        slider.scrollTo({
+
+            left:0,
+            behavior:"smooth"
+
+        });
+
+    }
+
+    else{
+
+        slider.scrollBy({
+
+            left:380,
+            behavior:"smooth"
+
+        });
+
+    }
+
+},4000);
+
+</script>
+<script>
+const menuToggle = document.querySelector('.menu-toggle');
+const nav = document.querySelector('nav');
+if (menuToggle && nav) {
+  menuToggle.addEventListener('click', () => {
+    const isOpen = nav.classList.toggle('open');
+    document.body.classList.toggle('menu-open', isOpen);
+    menuToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  });
+
+  document.addEventListener('click', (event) => {
+    if (window.innerWidth <= 900 && nav.classList.contains('open') && !nav.contains(event.target) && !menuToggle.contains(event.target)) {
+      nav.classList.remove('open');
+      document.body.classList.remove('menu-open');
+      menuToggle.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  document.querySelectorAll('nav a').forEach(link => {
+    link.addEventListener('click', () => {
+      if (window.innerWidth <= 900) {
+        nav.classList.remove('open');
+        document.body.classList.remove('menu-open');
+        menuToggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+  });
+}
+</script>
 
 </body>
 </html>

@@ -8,7 +8,15 @@
 <title>Contact | MANU PHOTOGRAPHY</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
 
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+
+<link rel="manifest" href="site.webmanifest">
 <style>
 
 *{
@@ -22,24 +30,55 @@ body{
 background:#0d0d0d;
 color:white;
 }
-
 header{
 position:fixed;
 top:0;
 left:0;
 width:100%;
-background:#000;
 display:flex;
 justify-content:space-between;
 align-items:center;
 padding:20px 60px;
-z-index:1000;
+background:#000;
+z-index:1003;
 }
 
 .logo{
+display:flex;
+align-items:center;
+gap:12px;
 font-size:30px;
 font-family:Cinzel;
 color:#D4AF37;
+text-decoration:none;
+font-weight:bold;
+}
+
+.logo img{
+width:44px;
+height:44px;
+object-fit:cover;
+border-radius:50%;
+flex:none;
+}
+
+.menu-toggle{
+display:none;
+flex-direction:column;
+gap:5px;
+background:transparent;
+border:none;
+cursor:pointer;
+padding:0;
+margin-left:auto;
+z-index:1004;
+}
+
+.menu-toggle span{
+width:28px;
+height:2px;
+background:#fff;
+transition:all .3s ease;
 }
 
 nav ul{
@@ -52,8 +91,8 @@ margin-left:30px;
 }
 
 nav ul li a{
-text-decoration:none;
 color:white;
+text-decoration:none;
 transition:.3s;
 }
 
@@ -61,6 +100,44 @@ nav ul li a:hover,
 .active{
 color:#D4AF37;
 }
+
+@media(max-width:900px){
+header{padding:16px 18px;gap:14px;}
+
+.logo{font-size:24px;gap:10px;line-height:1.05;}
+
+.logo img{width:34px;height:34px;}
+
+.menu-toggle{display:flex;}
+nav{
+position:fixed;
+top:0;
+left:-100%;
+width:280px;
+height:100vh;
+background:#050505;
+padding:90px 24px 24px;
+transition:left .3s ease;
+box-shadow:8px 0 30px rgba(0,0,0,.45);
+z-index:1002;
+border-right:1px solid rgba(212,175,55,0.3);
+}
+nav.open{left:0;}
+nav ul{flex-direction:column;gap:18px;align-items:flex-start;}
+nav ul li{margin-left:0;}
+nav ul li a{display:block;font-size:18px;padding:12px 6px;width:100%;}
+}
+
+body.menu-open::before{
+content:"";
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.55);
+z-index:1001;
+pointer-events:auto;
+}
+
+body.menu-open{overflow:hidden;}
 
 .banner{
 margin-top:80px;
@@ -79,17 +156,19 @@ color:#D4AF37;
 
 .container{
 width:90%;
-max-width:1200px;
+max-width:700px;
 margin:60px auto;
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:40px;
+display:flex;
+justify-content:center;
+align-items:center;
 }
 
 .box{
+width:100%;
 background:#181818;
 padding:35px;
 border-radius:15px;
+text-align:center;
 }
 
 .box h2{
@@ -144,6 +223,7 @@ margin-top:20px;
 .social{
 margin-top:20px;
 display:flex;
+justify-content:center;
 gap:15px;
 flex-wrap:wrap;
 }
@@ -167,15 +247,11 @@ margin-top:50px;
 @media(max-width:768px){
 
 .container{
-grid-template-columns:1fr;
+width:95%;
 }
 
 header{
 padding:20px;
-}
-
-nav{
-display:none;
 }
 
 }
@@ -188,7 +264,11 @@ display:none;
 
 <header>
 
-<div class="logo">MANU PHOTOGRAPHY</div>
+<div class="logo"><img src="Untitled design (4).png" alt="MANU Photography logo" referrerpolicy="no-referrer">MANU PHOTOGRAPHY</div>
+
+<button class="menu-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false">
+<span></span><span></span><span></span>
+</button>
 
 <nav>
 
@@ -198,9 +278,9 @@ display:none;
 <li><a href="about.html">About</a></li>
 <li><a href="portfolio.html">Portfolio</a></li>
 <li><a href="services.html">Services</a></li>
-<li><a href="booking.html">Booking</a></li>
+<li><a href="booking.html" class="active">Booking</a></li>
 <li><a href="gallery.html">Gallery</a></li>
-<li><a href="contact.html" class="active">Contact</a></li>
+<li><a href="contact.html">Contact</a></li>
 
 </ul>
 
@@ -240,77 +320,47 @@ display:none;
 
 </div>
 
-<div class="box">
-
-<h2>Send Message</h2>
-
-<form>
-
-<input type="text" placeholder="Your Name" required>
-
-<input type="email" placeholder="Your Email" required>
-
-<input type="tel" placeholder="Mobile Number" required>
-
-<textarea placeholder="Write Your Message"></textarea>
-
-<button type="submit">Send Message</button>
-
-</form>
-
-</div>
-<script>
-
-// Initialize EmailJS
-emailjs.init({
-    publicKey: "27HGZB7i11x4-brTa"
-});
-
-const form = document.getElementById("contact-form");
-
-form.addEventListener("submit", function(e){
-
-    e.preventDefault();
-
-    emailjs.sendForm(
-        "service_ia281r5",
-        "template_pc17p1q",
-        this
-    )
-
-    .then(function(){
-
-        document.getElementById("result").innerHTML =
-        "✅ Message Sent Successfully";
-
-        form.reset();
-
-    })
-
-    .catch(function(error){
-
-        document.getElementById("result").innerHTML =
-        "❌ Failed to Send Message";
-
-        console.log(error);
-
-    });
-
-});
-
-</script>
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </section>
-
 <footer>
 
-<h2 style="color:#D4AF37;">MANU PHOTOGRAPHY</h2>
+<h2 style="color:#a5861d;">MANU PHOTOGRAPHY</h2>
 
 <p>Dreams Change Into Stories</p>
+
+<p>📞 +91 8019225206</p>
 
 <p>© 2026 MANU PHOTOGRAPHY. All Rights Reserved.</p>
 
 </footer>
 
+<script>
+const menuToggle = document.querySelector('.menu-toggle');
+const nav = document.querySelector('nav');
+if (menuToggle && nav) {
+  menuToggle.addEventListener('click', () => {
+    const isOpen = nav.classList.toggle('open');
+    document.body.classList.toggle('menu-open', isOpen);
+    menuToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  });
+
+  document.addEventListener('click', (event) => {
+    if (window.innerWidth <= 900 && nav.classList.contains('open') && !nav.contains(event.target) && !menuToggle.contains(event.target)) {
+      nav.classList.remove('open');
+      document.body.classList.remove('menu-open');
+      menuToggle.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  document.querySelectorAll('nav a').forEach(link => {
+    link.addEventListener('click', () => {
+      if (window.innerWidth <= 900) {
+        nav.classList.remove('open');
+        document.body.classList.remove('menu-open');
+        menuToggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+  });
+}
+</script>
 </body>
 </html>

@@ -49,69 +49,98 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 @app.get("/gallery/{folder:path}")
-def get_gallery(folder: str):
+def get_gallery(folder: str = "photos"):
 
-    result = cloudinary.api.resources(
+    media = []
+
+    # Images
+    images = cloudinary.api.resources(
+        resource_type="image",
         type="upload",
-        max_results=100
+        max_results=500
     )
 
-    images = []
+    # Videos
+    videos = cloudinary.api.resources(
+        resource_type="video",
+        type="upload",
+        max_results=500
+    )
 
-    for item in result["resources"]:
+    for result, media_type in [
+        (images, "image"),
+        (videos, "video")
+    ]:
 
-        asset_folder = item.get("asset_folder", "")
+        for item in result["resources"]:
 
-        if folder == "photos":
-            if asset_folder.startswith("photos/"):
-                images.append({
+            asset_folder = item.get("asset_folder", "")
+
+            if folder == "photos":
+                if asset_folder.startswith("photos"):
+                    media.append({
+                        "id": item["public_id"],
+                        "url": item["secure_url"],
+                        "type": media_type
+                    })
+
+            elif asset_folder == folder:
+                media.append({
                     "id": item["public_id"],
-                    "url": item["secure_url"]
+                    "url": item["secure_url"],
+                    "type": media_type
                 })
 
-        elif asset_folder == folder:
-            images.append({
-                "id": item["public_id"],
-                "url": item["secure_url"]
-            })
-
-    for item in result["resources"]:
-        print(
-            item["public_id"],
-            " | asset_folder =", item.get("asset_folder")
-        )
-    return images
+    return media
 
 @app.get("/recent")
 def get_recent_images():
 
-    result = cloudinary.api.resources(
+    images_result = cloudinary.api.resources(
+        resource_type="image",
         type="upload",
         max_results=100
     )
 
-    images = []
+    videos_result = cloudinary.api.resources(
+        resource_type="video",
+        type="upload",
+        max_results=100
+    )
 
-    for item in result["resources"]:
+    media = []
 
+    # Images
+    for item in images_result["resources"]:
         asset_folder = item.get("asset_folder", "")
-
         if asset_folder.startswith("photos"):
-
-            images.append({
+            media.append({
                 "id": item["public_id"],
                 "url": item["secure_url"],
                 "folder": asset_folder,
-                "created_at": item["created_at"]
+                "created_at": item["created_at"],
+                "type": "image"
             })
-    images.sort(
+
+    # Videos
+    for item in videos_result["resources"]:
+        asset_folder = item.get("asset_folder", "")
+        if asset_folder.startswith("photos"):
+            media.append({
+                "id": item["public_id"],
+                "url": item["secure_url"],
+                "folder": asset_folder,
+                "created_at": item["created_at"],
+                "type": "video"
+            })
+
+    media.sort(
         key=lambda x: x["created_at"],
         reverse=True
     )
 
-    return images[:10]
+    return media[:10]
 
 @app.post("/send-email")
 async def send_email(

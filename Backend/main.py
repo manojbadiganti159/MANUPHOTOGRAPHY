@@ -45,7 +45,7 @@ def send_email_message(to_email: str, subject: str, message: str):
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # Change this after deployment
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -311,6 +311,8 @@ async def booking(
                 filename=referenceImage.filename
             )
 
+        print("EMAIL_USER =", EMAIL_USER)
+        print("EMAIL_PASS exists =", EMAIL_PASS is not None)
         # Send Email
         with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
 

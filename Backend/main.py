@@ -324,8 +324,7 @@ async def booking(
         </html>
         """
 
-         attachments = []
-
+        attachments = []
 
         if referenceImage is not None and referenceImage.filename:
 

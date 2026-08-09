@@ -204,7 +204,6 @@ def home():
         "message": "Photo Studio Booking API is running!"
     }
 
-
 @app.get("/health")
 def health():
     return {
@@ -388,3 +387,19 @@ async def booking(
             "success": False,
             "message": str(e)
         }
+@app.get("/resend-debug")
+def resend_debug():
+    key = os.getenv("RESEND_API_KEY")
+
+    return {
+        "key_exists": bool(key),
+        "key_prefix": key[:3] if key else None,
+        "key_length": len(key) if key else 0
+    }
+
+
+
+
+
+
+

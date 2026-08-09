@@ -3,3 +3,4 @@ uvicorn==0.51.0
 python-dotenv==1.2.2
 python-multipart==0.0.32
 cloudinary==1.45.0
+resend

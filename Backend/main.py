@@ -3,11 +3,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 
 import os
-import smtplib
-from email.message import EmailMessage
+import base64
 
 import cloudinary
 import cloudinary.api
+import resend
 
 # Load environment variables
 load_dotenv()
@@ -19,27 +19,15 @@ cloudinary.config(
     secure=True
 )
 
+
+RESEND_API_KEY = os.getenv("RESEND_API_KEY")
 EMAIL_USER = os.getenv("EMAIL_USER")
-EMAIL_PASS = os.getenv("EMAIL_PASS")
+
+resend.api_key = RESEND_API_KEY
 
 app = FastAPI(title="Photo Studio Booking API")
 
 from fastapi.staticfiles import StaticFiles
-
-
-def send_email_message(to_email: str, subject: str, message: str):
-    if not EMAIL_USER or not EMAIL_PASS:
-        raise RuntimeError("Email credentials are not configured.")
-
-    msg = EmailMessage()
-    msg["Subject"] = subject
-    msg["From"] = EMAIL_USER
-    msg["To"] = to_email
-    msg.set_content(message)
-
-    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
-        smtp.login(EMAIL_USER, EMAIL_PASS)
-        smtp.send_message(msg)
 
 # CORS
 app.add_middleware(
@@ -49,6 +37,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
 @app.get("/gallery/{folder:path}")
 def get_gallery(folder: str = "photos"):
 
@@ -142,19 +132,63 @@ def get_recent_images():
 
     return media[:10]
 
+# ============================================================
+# SEND EMAIL
+# ============================================================
+
 @app.post("/send-email")
 async def send_email(
     to_email: str = Form(...),
     subject: str = Form(...),
     message: str = Form(...)
 ):
+
     try:
-        send_email_message(to_email, subject, message)
+
+        if not RESEND_API_KEY:
+            raise RuntimeError("RESEND_API_KEY is not configured.")
+
+        if not EMAIL_USER:
+            raise RuntimeError("EMAIL_USER is not configured.")
+
+
+        result = resend.Emails.send({
+            "from": "onboarding@resend.dev",
+            "to": [to_email],
+            "subject": subject,
+            "html": f"""
+            <html>
+            <body style="font-family:Arial;">
+
+                <h2>{subject}</h2>
+
+                <p>{message}</p>
+
+                <hr>
+
+                <p style="color:gray;">
+                    MANU PHOTOGRAPHY
+                </p>
+
+            </body>
+            </html>
+            """
+        })
+
+
+        print("SEND-EMAIL RESULT:", result, flush=True)
+
+
         return {
             "success": True,
             "message": "Email sent successfully."
         }
+
+
     except Exception as e:
+
+        print("SEND-EMAIL ERROR:", str(e), flush=True)
+
         return {
             "success": False,
             "message": str(e)
@@ -191,6 +225,11 @@ async def booking(
 ):
 
     try:
+        if not RESEND_API_KEY:
+            raise RuntimeError("RESEND_API_KEY is not configured.")
+
+        if not EMAIL_USER:
+            raise RuntimeError("EMAIL_USER is not configured.")
 
         html = f"""
         <html>
@@ -285,62 +324,64 @@ async def booking(
         </html>
         """
 
-        msg = EmailMessage()
+         attachments = []
 
-        msg["Subject"] = f"📸 {photoshootType} Booking Request"
 
-        msg["From"] = EMAIL_USER
-
-        msg["To"] = EMAIL_USER
-
-        msg.set_content("This email contains an HTML booking request.")
-
-        msg.add_alternative(html, subtype="html")
-
-        # Attach reference image if uploaded
         if referenceImage is not None and referenceImage.filename:
 
             image_data = await referenceImage.read()
 
-            maintype, subtype = referenceImage.content_type.split("/")
+            encoded_file = base64.b64encode(
+                image_data
+            ).decode("utf-8")
 
-            msg.add_attachment(
-                image_data,
-                maintype=maintype,
-                subtype=subtype,
-                filename=referenceImage.filename
-            )
 
-        print("EMAIL_USER =", EMAIL_USER, flush=True)
-        print("EMAIL_PASS exists =", EMAIL_PASS is not None, flush=True)
-        print("Connecting to Gmail SMTP...", flush=True)
-        
-        with smtplib.SMTP_SSL(
-            "smtp.gmail.com",
-            465,
-            timeout=15
-        ) as smtp:
-        
-            print("SMTP connection established", flush=True)
-        
-            smtp.login(EMAIL_USER, EMAIL_PASS)
-        
-            print("SMTP login successful", flush=True)
-        
-            smtp.send_message(msg)
-        
-            print("Email sent successfully", flush=True)
+            attachments.append({
+                "filename": referenceImage.filename,
+                "content": encoded_file
+            })
+
+
+        # ------------------------------------------------
+        # Send booking email through Resend
+        # ------------------------------------------------
+
+        email_data = {
+            "from": "onboarding@resend.dev",
+            "to": [EMAIL_USER],
+            "subject": f"📸 {photoshootType} Booking Request",
+            "html": html
+        }
+
+
+        if attachments:
+
+            email_data["attachments"] = attachments
+
+
+        result = resend.Emails.send(email_data)
+
+
+        print(
+            "BOOKING EMAIL RESULT:",
+            result,
+            flush=True
+        )
+
 
         return {
             "success": True,
             "message": "Booking request sent successfully."
         }
 
-    except Exception as e:
-    import traceback
-    traceback.print_exc()
 
-    return {
-        "success": False,
-        "message": str(e)
-    }
+    except Exception as e:
+
+        import traceback
+
+        traceback.print_exc()
+
+        return {
+            "success": False,
+            "message": str(e)
+        }

@@ -311,14 +311,25 @@ async def booking(
                 filename=referenceImage.filename
             )
 
-        print("EMAIL_USER =", EMAIL_USER)
-        print("EMAIL_PASS exists =", EMAIL_PASS is not None)
-        # Send Email
-        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
-
+        print("EMAIL_USER =", EMAIL_USER, flush=True)
+        print("EMAIL_PASS exists =", EMAIL_PASS is not None, flush=True)
+        print("Connecting to Gmail SMTP...", flush=True)
+        
+        with smtplib.SMTP_SSL(
+            "smtp.gmail.com",
+            465,
+            timeout=15
+        ) as smtp:
+        
+            print("SMTP connection established", flush=True)
+        
             smtp.login(EMAIL_USER, EMAIL_PASS)
-
+        
+            print("SMTP login successful", flush=True)
+        
             smtp.send_message(msg)
+        
+            print("Email sent successfully", flush=True)
 
         return {
             "success": True,
@@ -326,8 +337,10 @@ async def booking(
         }
 
     except Exception as e:
+    import traceback
+    traceback.print_exc()
 
-        return {
-            "success": False,
-            "message": str(e)
-        }
+    return {
+        "success": False,
+        "message": str(e)
+    }

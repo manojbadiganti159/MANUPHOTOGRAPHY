@@ -12,6 +12,10 @@ import resend
 # Load environment variables
 load_dotenv()
 
+print("===== RESEND CONFIG CHECK =====", flush=True)
+print("RESEND_API_KEY exists:", bool(os.getenv("RESEND_API_KEY")), flush=True)
+print("RESEND_API_KEY prefix:", os.getenv("RESEND_API_KEY", "")[:3], flush=True)
+print("================================", flush=True)
 cloudinary.config(
     cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
     api_key=os.getenv("CLOUDINARY_API_KEY"),
@@ -24,8 +28,6 @@ RESEND_API_KEY = os.getenv("RESEND_API_KEY")
 EMAIL_USER = os.getenv("EMAIL_USER")
 
 resend.api_key = RESEND_API_KEY
-print("RESEND KEY EXISTS:", bool(os.getenv("RESEND_API_KEY")))
-print("RESEND KEY PREFIX:", os.getenv("RESEND_API_KEY", "")[:3])
 
 app = FastAPI(title="Photo Studio Booking API")
 

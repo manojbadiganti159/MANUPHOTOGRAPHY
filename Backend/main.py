@@ -24,6 +24,8 @@ RESEND_API_KEY = os.getenv("RESEND_API_KEY")
 EMAIL_USER = os.getenv("EMAIL_USER")
 
 resend.api_key = RESEND_API_KEY
+print("RESEND KEY EXISTS:", bool(os.getenv("RESEND_API_KEY")))
+print("RESEND KEY PREFIX:", os.getenv("RESEND_API_KEY", "")[:3])
 
 app = FastAPI(title="Photo Studio Booking API")
 

@@ -213,7 +213,6 @@ def health():
 
 @app.post("/booking")
 async def booking(
-
     fullName: str = Form(...),
     email: str = Form(...),
     phone: str = Form(...),
@@ -224,20 +223,19 @@ async def booking(
     people: str = Form(""),
     requirements: str = Form(""),
     referenceImage: UploadFile = File(None)
-
 ):
-
     try:
         if not RESEND_API_KEY:
             raise RuntimeError("RESEND_API_KEY is not configured.")
-
         if not EMAIL_USER:
             raise RuntimeError("EMAIL_USER is not configured.")
 
+        # ============================================================
+        # 1. ADMIN EMAIL TEMPLATE
+        # ============================================================
         html = f"""
         <html>
         <body style="font-family:Arial;background:#f5f5f5;padding:30px;">
-
         <div style="
             max-width:650px;
             margin:auto;
@@ -246,417 +244,128 @@ async def booking(
             border-radius:12px;
             box-shadow:0 0 10px rgba(0,0,0,.15);
         ">
-
             <h2 style="color:#c58b2b;">
                 📸 New Booking Request
             </h2>
-
             <hr>
-
             <h3>👤 Client Details</h3>
-
             <table style="width:100%;border-collapse:collapse;">
-
-                <tr>
-                    <td><b>Name</b></td>
-                    <td>{fullName}</td>
-                </tr>
-
-                <tr>
-                    <td><b>Email</b></td>
-                    <td>{email}</td>
-                </tr>
-
-                <tr>
-                    <td><b>Phone</b></td>
-                    <td>{phone}</td>
-                </tr>
-
+                <tr><td><b>Name</b></td><td>{fullName}</td></tr>
+                <tr><td><b>Email</b></td><td>{email}</td></tr>
+                <tr><td><b>Phone</b></td><td>{phone}</td></tr>
             </table>
-
             <hr>
-
             <h3>📅 Booking Details</h3>
-
             <table style="width:100%;border-collapse:collapse;">
-
-                <tr>
-                    <td><b>Photoshoot</b></td>
-                    <td>{photoshootType}</td>
-                </tr>
-
-                <tr>
-                    <td><b>Date</b></td>
-                    <td>{date}</td>
-                </tr>
-
-                <tr>
-                    <td><b>Time</b></td>
-                    <td>{time}</td>
-                </tr>
-
-                <tr>
-                    <td><b>Location</b></td>
-                    <td>{location if location else "Not Provided"}</td>
-                </tr>
-
-                <tr>
-                    <td><b>No. of People</b></td>
-                    <td>{people if people else "Not Provided"}</td>
-                </tr>
-
+                <tr><td><b>Photoshoot</b></td><td>{photoshootType}</td></tr>
+                <tr><td><b>Date</b></td><td>{date}</td></tr>
+                <tr><td><b>Time</b></td><td>{time}</td></tr>
+                <tr><td><b>Location</b></td><td>{location if location else "Not Provided"}</td></tr>
+                <tr><td><b>No. of People</b></td><td>{people if people else "Not Provided"}</td></tr>
             </table>
-
             <hr>
-
             <h3>📝 Additional Requirements</h3>
-
-            <p>
-                {requirements if requirements else "No additional requirements."}
-            </p>
-
+            <p>{requirements if requirements else "No additional requirements."}</p>
             <hr>
-
             <p style="color:gray;font-size:13px;">
                 Booking request submitted from the Photo Studio Website.
             </p>
-
         </div>
-
         </body>
         </html>
         """
 
+        # ============================================================
+        # 2. ATTACHMENTS
+        # ============================================================
         attachments = []
-
         if referenceImage is not None and referenceImage.filename:
-
             image_data = await referenceImage.read()
-
-            encoded_file = base64.b64encode(
-                image_data
-            ).decode("utf-8")
-
-
+            encoded_file = base64.b64encode(image_data).decode("utf-8")
             attachments.append({
                 "filename": referenceImage.filename,
                 "content": encoded_file
             })
 
+        # ============================================================
+        # 3. SEND ADMIN EMAIL
+        # ============================================================
+        email_data = {
+            "from": "Manu Photography <booking@manuphotography.co.in>",
+            "to": [EMAIL_USER],
+            "subject": f"📸 {photoshootType} Booking Request",
+            "html": html
+        }
+        if attachments:
+            email_data["attachments"] = attachments
 
-        # ------------------------------------------------
-# Send booking email to Studio through Resend
-# ------------------------------------------------
+        studio_result = resend.Emails.send(email_data)
+        print("BOOKING EMAIL RESULT:", studio_result, flush=True)
 
-    email_data = {
-        "from": "Manu Photography <booking@manuphotography.co.in>",
-        "to": [EMAIL_USER],
-        "subject": f"📸 {photoshootType} Booking Request",
-        "html": html
-    }
-    
-    if attachments:
-        email_data["attachments"] = attachments
-    
-    
-    studio_result = resend.Emails.send(email_data)
-    
-    
-    print(
-        "BOOKING EMAIL RESULT:",
-        studio_result,
-        flush=True
-    )
-    
-    
-    # ------------------------------------------------
-    # Send confirmation email to Customer
-    # ------------------------------------------------
-    
+        # ============================================================
+        # 4. CUSTOMER EMAIL TEMPLATE
+        # ============================================================
         customer_html = f"""
         <html>
-        
-        <body style="
-            margin:0;
-            padding:30px 15px;
-            background:#f5f5f5;
-            font-family:Arial,Helvetica,sans-serif;
-        ">
-        
-        <div style="
-            max-width:650px;
-            margin:auto;
-            background:white;
-            padding:30px;
-            border-radius:12px;
-            box-shadow:0 0 10px rgba(0,0,0,.15);
-        ">
-        
-            <!-- HEADER -->
-        
-            <div style="text-align:center;">
-        
-                <h2 style="
-                    color:#c58b2b;
-                    margin:0;
-                ">
-                    📸 Booking Request Submitted Successfully
-                </h2>
-        
+        <body style="margin:0;padding:30px 15px;background:#f5f5f5;font-family:Arial,Helvetica,sans-serif;">
+        <div style="max-width:650px;margin:auto;background:#ffffff;padding:35px;border-radius:12px;box-shadow:0 0 10px rgba(0,0,0,.15);">
+            <div style="text-align:center;margin-bottom:25px;">
+                <h2 style="color:#c58b2b;margin:0;font-size:24px;">📸 Booking Request Submitted Successfully</h2>
             </div>
-        
-        
-            <hr style="
-                border:none;
-                border-top:1px solid #ddd;
-                margin:25px 0;
-            ">
-        
-        
-            <!-- GREETING -->
-        
-            <h3 style="
-                color:#333;
-                margin-bottom:10px;
-            ">
-                Hi {fullName},
-            </h3>
-        
-            <p style="
-                color:#444;
-                line-height:1.7;
-                font-size:15px;
-            ">
-                Thank you for choosing <b>MANU PHOTOGRAPHY</b>.
-                We have successfully received your booking request.
+            <hr style="border:none;border-top:1px solid #ddd;margin:20px 0;">
+            <h3 style="margin-bottom:10px;color:#333;">Hi {fullName},</h3>
+            <p style="color:#444;line-height:1.7;font-size:15px;">
+                Thank you for choosing <b>MANU PHOTOGRAPHY</b>. We have successfully received your booking request.
             </p>
-        
-        
-            <!-- BOOKING DETAILS -->
-        
-            <h3 style="color:#333;">
-                📅 Booking Details
-            </h3>
-        
-            <table style="
-                width:100%;
-                border-collapse:collapse;
-            ">
-        
-                <tr>
-                    <td style="
-                        padding:10px;
-                        border-bottom:1px solid #eee;
-                    ">
-                        <b>📸 Photoshoot</b>
-                    </td>
-        
-                    <td style="
-                        padding:10px;
-                        border-bottom:1px solid #eee;
-                    ">
-                        {photoshootType}
-                    </td>
-                </tr>
-        
-                <tr>
-                    <td style="
-                        padding:10px;
-                        border-bottom:1px solid #eee;
-                    ">
-                        <b>📅 Date</b>
-                    </td>
-        
-                    <td style="
-                        padding:10px;
-                        border-bottom:1px solid #eee;
-                    ">
-                        {date}
-                    </td>
-                </tr>
-        
-                <tr>
-                    <td style="
-                        padding:10px;
-                        border-bottom:1px solid #eee;
-                    ">
-                        <b>🕐 Time</b>
-                    </td>
-        
-                    <td style="
-                        padding:10px;
-                        border-bottom:1px solid #eee;
-                    ">
-                        {time}
-                    </td>
-                </tr>
-        
-                <tr>
-                    <td style="
-                        padding:10px;
-                        border-bottom:1px solid #eee;
-                    ">
-                        <b>📍 Location</b>
-                    </td>
-        
-                    <td style="
-                        padding:10px;
-                        border-bottom:1px solid #eee;
-                    ">
-                        {location if location else "Not Provided"}
-                    </td>
-                </tr>
-        
-                <tr>
-                    <td style="padding:10px;">
-                        <b>👥 No. of People</b>
-                    </td>
-        
-                    <td style="padding:10px;">
-                        {people if people else "Not Provided"}
-                    </td>
-                </tr>
-        
+            <h3 style="color:#333;margin-top:28px;">📅 Booking Details</h3>
+            <table style="width:100%;border-collapse:collapse;font-size:14px;">
+                <tr><td style="padding:10px;border-bottom:1px solid #eee;"><b>📸 Photoshoot</b></td><td style="padding:10px;border-bottom:1px solid #eee;">{photoshootType}</td></tr>
+                <tr><td style="padding:10px;border-bottom:1px solid #eee;"><b>📅 Date</b></td><td style="padding:10px;border-bottom:1px solid #eee;">{date}</td></tr>
+                <tr><td style="padding:10px;border-bottom:1px solid #eee;"><b>🕐 Time</b></td><td style="padding:10px;border-bottom:1px solid #eee;">{time}</td></tr>
+                <tr><td style="padding:10px;border-bottom:1px solid #eee;"><b>📍 Location</b></td><td style="padding:10px;border-bottom:1px solid #eee;">{location if location else "Not Provided"}</td></tr>
+                <tr><td style="padding:10px;"><b>👥 No. of People</b></td><td style="padding:10px;">{people if people else "Not Provided"}</td></tr>
             </table>
-        
-        
-            <hr style="
-                border:none;
-                border-top:1px solid #ddd;
-                margin:25px 0;
-            ">
-        
-        
-            <!-- CONFIRMATION MESSAGE -->
-        
-            <div style="
-                background:#faf7f0;
-                border-left:4px solid #c58b2b;
-                padding:15px;
-                border-radius:6px;
-            ">
-        
-                <p style="
-                    margin:0;
-                    color:#444;
-                    line-height:1.7;
-                ">
-                    Your booking request has been received successfully.
-                    Our team will review your request and contact you shortly
-                    to confirm availability and finalize your booking.
+            <hr style="border:none;border-top:1px solid #ddd;margin:25px 0;">
+            <div style="background:#faf7f0;border-left:4px solid #c58b2b;padding:15px 18px;border-radius:6px;">
+                <p style="margin:0;color:#444;line-height:1.7;font-size:14px;">
+                    Your booking request has been received successfully. Our team will review your details and contact you shortly to confirm availability and finalize your booking.
                 </p>
-        
             </div>
-        
-        
-            <!-- CONTACT -->
-        
-            <h3 style="
-                color:#333;
-                margin-top:30px;
-            ">
-                📞 Contact Us
-            </h3>
-        
-            <p style="
-                color:#555;
-                line-height:1.7;
-            ">
-                If you have any questions or need to make changes to your
-                booking request, please contact us.
-            </p>
-        
-            <p style="margin:6px 0;">
-                📧 <b>Email:</b> {EMAIL_USER}
-            </p>
-        
-        
-            <hr style="
-                border:none;
-                border-top:1px solid #ddd;
-                margin:25px 0 20px;
-            ">
-        
-        
-            <!-- LOGO / SIGNATURE -->
-        
+            <h3 style="color:#333;margin-top:30px;">📞 Need Help?</h3>
+            <p style="color:#444;line-height:1.7;font-size:14px;">If you have any questions or would like to make changes to your request, please contact us.</p>
+            <table style="width:100%;border-collapse:collapse;margin-top:10px;">
+                <tr><td style="padding:6px 0;color:#555;">📧 <b>Email</b></td><td style="padding:6px 0;">{EMAIL_USER}</td></tr>
+                <tr><td style="padding:6px 0;color:#555;">📞 <b>Phone</b></td><td style="padding:6px 0;">{phone}</td></tr>
+            </table>
+            <hr style="border:none;border-top:1px solid #ddd;margin:28px 0 20px;">
             <div style="text-align:center;">
-        
-                <img
-                    src="YOUR_LOGO_URL_HERE"
-                    alt="Manu Photography"
-                    style="
-                        max-width:180px;
-                        height:auto;
-                        display:block;
-                        margin:0 auto 10px;
-                    "
-                >
-        
-                <p style="
-                    margin:5px 0;
-                    color:#777;
-                    font-size:13px;
-                ">
-                    Capturing moments, creating memories.
-                </p>
-        
-                <p style="
-                    margin:5px 0;
-                    color:#c58b2b;
-                    font-weight:bold;
-                ">
-                    MANU PHOTOGRAPHY
-                </p>
-        
+                <p style="margin:5px 0;color:#777;font-size:13px;">Capturing moments, creating memories.</p>
+                <p style="margin:5px 0;font-weight:bold;color:#c58b2b;">MANU PHOTOGRAPHY</p>
             </div>
-        
         </div>
-        
         </body>
         </html>
         """
-        
-        
+
+        # ============================================================
+        # 5. SEND CUSTOMER EMAIL
+        # ============================================================
         customer_email_data = {
             "from": "Manu Photography <booking@manuphotography.co.in>",
             "to": [email],
             "subject": "📸 Booking Request Submitted Successfully - Manu Photography",
             "html": customer_html
         }
-        
-        
-        customer_result = resend.Emails.send(
-            customer_email_data
-        )
-        
-        
-        print(
-            "CUSTOMER EMAIL RESULT:",
-            customer_result,
-            flush=True
-        )
-        
-        
-        # ------------------------------------------------
-        # Final response
-        # ------------------------------------------------
-        
-        return {
-            "success": True,
-            "message": "Booking request submitted successfully."
-        }
+        customer_result = resend.Emails.send(customer_email_data)
+        print("CUSTOMER EMAIL RESULT:", customer_result, flush=True)
+
+        return {"success": True, "message": "Booking request submitted successfully."}
 
     except Exception as e:
-
         import traceback
-
         traceback.print_exc()
-
-        return {
-            "success": False,
-            "message": str(e)
-        }
+        return {"success": False, "message": str(e)}
+        
 @app.get("/resend-debug")
 def resend_debug():
     key = os.getenv("RESEND_API_KEY")

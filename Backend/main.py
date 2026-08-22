@@ -335,7 +335,7 @@ async def booking(
             <p style="color:#444;line-height:1.7;font-size:14px;">If you have any questions or would like to make changes to your request, please contact us.</p>
             <table style="width:100%;border-collapse:collapse;margin-top:10px;">
                 <tr><td style="padding:6px 0;color:#555;">📧 <b>Email</b></td><td style="padding:6px 0;">{EMAIL_USER}</td></tr>
-                <tr><td style="padding:6px 0;color:#555;">📞 <b>Phone</b></td><td style="padding:6px 0;">{phone}</td></tr>
+                <tr><td style="padding:6px 0;color:#555;">📞 <b>Phone</b></td><td style="padding:6px 0;">8019225206</td></tr>
             </table>
             <hr style="border:none;border-top:1px solid #ddd;margin:28px 0 20px;">
             <div style="text-align:center;">

@@ -157,7 +157,7 @@ async def send_email(
 
 
         result = resend.Emails.send({
-            "from": "onboarding@resend.dev",
+            "from": "Manu Photography <booking@manuphotography.co.in>",
             "to": [to_email],
             "subject": subject,
             "html": f"""
@@ -349,7 +349,7 @@ async def booking(
         # ------------------------------------------------
 
         email_data = {
-            "from": "onboarding@resend.dev",
+            "from": "Manu Photography <booking@manuphotography.co.in>",
             "to": [EMAIL_USER],
             "subject": f"📸 {photoshootType} Booking Request",
             "html": html
